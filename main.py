@@ -1,34 +1,28 @@
-#!/usr/bin/env python3
-"""Основной модуль для запуска проекта."""
+# main.py
+print("🚀 Запуск HH Project 2.0 с Poetry!")
 
-import asyncio
-import sys
-from pathlib import Path
+try:
+    import requests
+    from dotenv import load_dotenv
 
-# Добавляем корень проекта в Python path
-sys.path.insert(0, str(Path(__file__).parent))
+    print("✅ Все пакеты загружены успешно!")
 
-from hh_project2.api.hh_api import HeadHunterAPI
-from hh_project2.database.db_creator import create_database, create_tables
-from hh_project2.database.db_manager import DBManager
-from hh_project2.utils.config import load_config
+    # Загружаем конфигурацию
+    from hh_project2.utils.config import load_config
 
-
-def main():
-    """Основная функция запуска проекта."""
-    print("🚀 Запуск HH Project 2.0")
-
-    # Загрузка конфигурации
     config = load_config()
     print("✅ Конфигурация загружена")
 
-    # Здесь будет основная логика
-    print("Проект успешно инициализирован с Poetry!")
+    # Тест API
+    response = requests.get("https://api.hh.ru/", timeout=5)
+    print(f"✅ API hh.ru доступно, статус: {response.status_code}")
 
-    # Пример использования API
-    api = HeadHunterAPI()
-    print("✅ API инициализировано")
+    # Показываем конфиг
+    db_config = config["db"]
+    print(f"   DB: {db_config['user']}@{db_config['host']}:{db_config['port']}")
 
+except Exception as e:
+    print(f"❌ Ошибка: {e}")
+    import traceback
 
-if __name__ == "__main__":
-    main()
+    traceback.print_exc()
