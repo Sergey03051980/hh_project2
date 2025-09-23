@@ -1,38 +1,59 @@
-# tests/test_api.py
-from hh_project2.api.hh_api import HeadHunterAPI
+import pytest
+from hh_project2.api import HHAPI
+from hh_project2.models import Company, Vacancy
 
 
-def test_api():
-    api = HeadHunterAPI()
+def test_hh_api_initialization():
+    """Тест инициализации API"""
+    api = HHAPI()
+    assert api.base_url == "https://api.hh.ru/"
+    assert 'User-Agent' in api.headers
 
-    # Тестируем получение работодателя
-    employer = api.get_employer(1455)  # HeadHunter
-    if employer:
-        print(f"✅ Работодатель: {employer.get('name')}")
-        print(f"   URL: {employer.get('alternate_url')}")
-    else:
-        print("❌ Не удалось получить работодателя")
-        return
 
-    # Тестируем вакансии
-    vacancies = api.get_all_vacancies(1455, max_pages=1)
-    print(f"✅ Получено вакансий: {len(vacancies)}")
+def test_get_employer_info():
+    """Тест получения информации о компании"""
+    api = HHAPI()
+    employer_info = api.get_employer_info(1740)  # Яндекс
 
-    # Покажем первые 5 вакансий если есть
-    if vacancies:
-        print("\nПервые 5 вакансий:")
-        for i, vacancy in enumerate(vacancies[:5]):
-            salary = vacancy.get('salary')
-            if salary:
-                salary_info = f"{salary.get('from', '?')}-{salary.get('to', '?')} {salary.get('currency', '')}"
-            else:
-                salary_info = "не указана"
+    assert employer_info is not None
+    assert 'id' in employer_info
+    assert 'name' in employer_info
 
-            print(f"{i + 1}. {vacancy.get('name')}")
-            print(f"   Зарплата: {salary_info}")
-            print(f"   URL: {vacancy.get('alternate_url')}")
-            print()
+
+def test_parse_company_data():
+    """Тест парсинга данных компании"""
+    api = HHAPI()
+    company = api.parse_company_data(1740, "Яндекс")
+
+    assert isinstance(company, Company)
+    assert company.id == 1740
+    assert company.name == "Яндекс"
+
+
+def test_parse_vacancy_data():
+    """Тест парсинга данных вакансии"""
+    api = HHAPI()
+
+    # Создаем mock данные вакансии
+    mock_vacancy_data = {
+        'id': '123456',
+        'name': 'Python Developer',
+        'employer': {'id': '1740'},
+        'salary': {'from': 100000, 'to': 200000, 'currency': 'RUR'},
+        'alternate_url': 'http://example.com',
+        'description': 'Test description'
+    }
+
+    vacancy = api.parse_vacancy_data(mock_vacancy_data)
+
+    assert isinstance(vacancy, Vacancy)
+    assert vacancy.id == 123456
+    assert vacancy.name == 'Python Developer'
 
 
 if __name__ == "__main__":
-    test_api()
+    test_hh_api_initialization()
+    test_get_employer_info()
+    test_parse_company_data()
+    test_parse_vacancy_data()
+    print("✅ Все тесты API прошли успешно!")
