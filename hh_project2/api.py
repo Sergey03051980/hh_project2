@@ -1,9 +1,8 @@
 import requests
 import time
 from typing import List, Dict, Any
-from .models import Company, Vacancy  # Изменено здесь!
-from .config import HH_API_URL  # И здесь!
-
+from .models import Company, Vacancy  # Изменено!
+from .config import HH_API_URL  # Изменено!
 
 class HHAPI:
     """Класс для работы с API HeadHunter"""

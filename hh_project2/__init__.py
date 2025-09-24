@@ -6,6 +6,7 @@ __version__ = "1.0.0"
 __author__ = "Your Name"
 
 from .api import HHAPI
-from .database import DatabaseManager
+from .database_manager import DatabaseManager  # Изменено!
 from .db_manager import DBManager
 from .models import Company, Vacancy
+from .config import COMPANIES, DB_NAME  # Добавлено!

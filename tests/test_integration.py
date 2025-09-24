@@ -1,4 +1,4 @@
-from hh_project2.database import DatabaseManager
+from hh_project2.database_manager import DatabaseManager
 from hh_project2.api import HHAPI
 from hh_project2.config import COMPANIES
 
